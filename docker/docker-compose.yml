@@ -1,0 +1,24 @@
+version: "3.8"
+
+services:
+  android-ui-assist-mcp:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: android-ui-assist-mcp
+    restart: unless-stopped
+    volumes:
+      # Mount ADB socket from host (Linux only)
+      - /tmp/android-adb:/tmp/android-adb:ro
+      # Mount ADB from host if needed
+      - /usr/bin/adb:/usr/bin/adb:ro
+    environment:
+      - NODE_ENV=production
+    # This service doesn't need to expose ports as it communicates via stdio
+    # but we're adding a health check for monitoring
+    healthcheck:
+      test: ["CMD", "node", "-e", "console.log('OK')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s

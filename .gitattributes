@@ -1,0 +1,32 @@
+# Auto detect text files and perform LF normalization
+* text=auto eol=lf
+
+# Scripts
+*.js text eol=lf
+*.json text eol=lf
+*.ts text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# Binaries
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg binary
+
+# Dependencies
+node_modules/ -text
+dist/ -text
+package/ -text
+
+# OS generated files
+.DS_Store store
+.DS_Store? store
+._* store
+.Spotlight-V100 store
+.Trashes store
+ehthumbs.db store
+Thumbs.db store
