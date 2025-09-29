@@ -43,8 +43,8 @@ See the MCP server in action with real-time Android UI analysis:
 
 ## Table of Contents
 
-- [Installation](#installation)
 - [AI Agent Configuration](#ai-agent-configuration)
+- [Installation](#installation)
 - [Development Workflow](#development-workflow)
 - [Prerequisites](#prerequisites)
 - [Development Environment Setup](#development-environment-setup)
@@ -54,37 +54,22 @@ See the MCP server in action with real-time Android UI analysis:
 - [Troubleshooting](#troubleshooting)
 - [Development](#development)
 
-## Installation
-
-### Package Manager Installation
-
-```bash
-npm install -g android-ui-assist-mcp
-```
-
-### Source Installation
-
-```bash
-git clone https://github.com/yourusername/android-ui-assist-mcp
-cd android-ui-assist-mcp
-npm install && npm run build
-```
-
-### Installation Verification
-
-After installation, verify the package is available:
-
-```bash
-android-ui-assist-mcp --version
-# For npm installation
-npx android-ui-assist-mcp --version
-```
-
 ## AI Agent Configuration
 
-### Claude Code
+### <details>
+<summary><strong>Claude Code</strong></summary>
 
-Configure Claude Code by adding the MCP server to your configuration:
+#### CLI Installation
+```bash
+# NPM Installation
+claude mcp add android-ui-assist -- npx android-ui-assist-mcp
+
+# Local Development
+claude mcp add android-ui-assist -- node "D:\\projects\\android-ui-assist-mcp\\dist\\index.js"
+```
+
+#### Configuration File
+Add to your Claude Code configuration:
 
 **Global Configuration:**
 ```json
@@ -111,11 +96,14 @@ Configure Claude Code by adding the MCP server to your configuration:
   }
 }
 ```
+</details>
 
-### Claude Desktop
+### <details>
+<summary><strong>Claude Desktop</strong></summary>
 
 Create or edit `%APPDATA%\Claude\claude_desktop_config.json`:
 
+**NPM Installation:**
 ```json
 {
   "mcpServers": {
@@ -128,8 +116,7 @@ Create or edit `%APPDATA%\Claude\claude_desktop_config.json`:
 }
 ```
 
-For local development:
-
+**Local Development:**
 ```json
 {
   "mcpServers": {
@@ -143,6 +130,95 @@ For local development:
 ```
 
 Restart Claude Desktop to apply configuration.
+</details>
+
+### <details>
+<summary><strong>GitHub Copilot (VS Code)</strong></summary>
+
+Create `.vscode/settings.json` in your project:
+
+```json
+{
+  "github.copilot.enable": {
+    "*": true
+  },
+  "mcp.servers": {
+    "android-ui-assist": {
+      "command": "npx",
+      "args": ["android-ui-assist-mcp"],
+      "timeout": 10000
+    }
+  }
+}
+```
+</details>
+
+### <details>
+<summary><strong>Gemini CLI</strong></summary>
+
+#### CLI Installation
+```bash
+# NPM Installation
+gemini mcp add android-ui-assist npx android-ui-assist-mcp
+
+# Local Development
+gemini mcp add android-ui-assist node "D:\\projects\\android-ui-assist-mcp\\dist\\index.js"
+```
+
+#### Configuration File
+Create `~/.gemini/settings.json` (Windows: `%USERPROFILE%\.gemini\settings.json`):
+
+```json
+{
+  "mcpServers": {
+    "android-ui-assist": {
+      "command": "npx",
+      "args": ["android-ui-assist-mcp"]
+    }
+  }
+}
+```
+
+For local development:
+```json
+{
+  "mcpServers": {
+    "android-ui-assist": {
+      "command": "node",
+      "args": ["D:\\projects\\android-ui-assist-mcp\\dist\\index.js"]
+    }
+  }
+}
+```
+
+Verify installation: `gemini mcp list`
+</details>
+
+## Installation
+
+### Package Manager Installation
+
+```bash
+npm install -g android-ui-assist-mcp
+```
+
+### Source Installation
+
+```bash
+git clone https://github.com/yourusername/android-ui-assist-mcp
+cd android-ui-assist-mcp
+npm install && npm run build
+```
+
+### Installation Verification
+
+After installation, verify the package is available:
+
+```bash
+android-ui-assist-mcp --version
+# For npm installation
+npx android-ui-assist-mcp --version
+```
 
 ## Development Workflow
 
@@ -230,73 +306,6 @@ flutter run
 3. Connect device or start emulator
 4. Enable AI agent integration for real-time UI analysis
 
-### Gemini CLI
-
-Install and configure:
-
-```bash
-npm install -g @google/generative-ai-cli
-gemini auth login
-```
-
-**Method 1: Command Line Configuration**
-
-```bash
-# For NPM installation
-gemini mcp add android-ui-assist npx android-ui-assist-mcp
-
-# For local development
-gemini mcp add android-ui-assist node "/path/to/android-ui-assist-mcp/dist/index.js"
-```
-
-**Method 2: Configuration File**
-
-Create `~/.gemini/settings.json` (Windows: `%USERPROFILE%\.gemini\settings.json`):
-
-```json
-{
-  "mcpServers": {
-    "android-ui-assist": {
-      "command": "npx",
-      "args": ["android-ui-assist-mcp"]
-    }
-  }
-}
-```
-
-For local development:
-
-```json
-{
-  "mcpServers": {
-    "android-ui-assist": {
-      "command": "node",
-      "args": ["/path/to/android-ui-assist-mcp/dist/index.js"]
-    }
-  }
-}
-```
-
-Verify: `gemini mcp list`
-
-### GitHub Copilot (VS Code)
-
-Create `.vscode/settings.json` in your project:
-
-```json
-{
-  "github.copilot.enable": {
-    "*": true
-  },
-  "mcp.servers": {
-    "android-ui-assist": {
-      "command": "npx",
-      "args": ["android-ui-assist-mcp"],
-      "timeout": 10000
-    }
-  }
-}
-```
 
 ## Docker Deployment
 
