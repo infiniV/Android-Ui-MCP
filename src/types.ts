@@ -93,12 +93,16 @@ export class ScreenshotCaptureError extends ADBCommandError {
 
 // Tool input schemas
 export const TakeScreenshotInputSchema = z.object({
-  deviceId: z.string().optional().describe(
-    'The ID of the Android device to capture a screenshot from. If not provided, uses the first available device.'
-  ),
-  format: z.enum(['png']).default('png').describe(
-    'The image format for the screenshot. Currently only PNG is supported.'
-  ),
+  deviceId: z
+    .string()
+    .optional()
+    .describe(
+      'The ID of the Android device to capture a screenshot from. If not provided, uses the first available device.'
+    ),
+  format: z
+    .enum(['png'])
+    .default('png')
+    .describe('The image format for the screenshot. Currently only PNG is supported.'),
 });
 
 export const ListDevicesInputSchema = z.object({});
@@ -114,16 +118,45 @@ export const TakeScreenshotOutputSchema = z.object({
 });
 
 export const ListDevicesOutputSchema = z.object({
-  devices: z.array(z.object({
-    id: z.string().describe('Device ID'),
-    status: z.string().describe('Device status'),
-    model: z.string().optional().describe('Device model'),
-    product: z.string().optional().describe('Product name'),
-    transportId: z.string().optional().describe('Transport ID'),
-    usb: z.string().optional().describe('USB information'),
-    productString: z.string().optional().describe('Product string'),
-  })).describe('List of connected Android devices'),
+  devices: z
+    .array(
+      z.object({
+        id: z.string().describe('Device ID'),
+        status: z.string().describe('Device status'),
+        model: z.string().optional().describe('Device model'),
+        product: z.string().optional().describe('Product name'),
+        transportId: z.string().optional().describe('Transport ID'),
+        usb: z.string().optional().describe('USB information'),
+        productString: z.string().optional().describe('Product string'),
+      })
+    )
+    .describe('List of connected Android devices'),
 });
+
+// MCP Tool schemas
+export const TakeScreenshotToolSchema = {
+  type: 'object' as const,
+  properties: {
+    deviceId: {
+      type: 'string' as const,
+      description:
+        'The ID of the Android device to capture a screenshot from. If not provided, uses the first available device.',
+    },
+    format: {
+      type: 'string' as const,
+      enum: ['png'],
+      default: 'png',
+      description: 'The image format for the screenshot. Currently only PNG is supported.',
+    },
+  },
+  required: [] as string[],
+};
+
+export const ListDevicesToolSchema = {
+  type: 'object' as const,
+  properties: {},
+  required: [] as string[],
+};
 
 // Type exports
 export type TakeScreenshotInput = z.infer<typeof TakeScreenshotInputSchema>;

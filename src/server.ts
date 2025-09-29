@@ -5,13 +5,16 @@ import {
   CallToolResult,
   ListToolsRequestSchema,
   Tool,
+  CallToolRequest,
 } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
-import { 
-  TakeScreenshotInputSchema, 
-  TakeScreenshotOutputSchema, 
-  ListDevicesInputSchema, 
-  ListDevicesOutputSchema 
+import {
+  TakeScreenshotInputSchema,
+  TakeScreenshotOutputSchema,
+  ListDevicesInputSchema,
+  ListDevicesOutputSchema,
+  TakeScreenshotToolSchema,
+  ListDevicesToolSchema,
 } from './types.js';
 import { captureScreenshotResponse } from './utils/screenshot.js';
 import { getConnectedDevices } from './utils/adb.js';
@@ -42,19 +45,19 @@ class AndroidScreenshotServer {
         {
           name: 'take_android_screenshot',
           description: 'Capture a screenshot from an Android device or emulator',
-          inputSchema: TakeScreenshotInputSchema,
+          inputSchema: TakeScreenshotToolSchema,
         },
         {
           name: 'list_android_devices',
           description: 'List all connected Android devices and emulators',
-          inputSchema: ListDevicesInputSchema,
+          inputSchema: ListDevicesToolSchema,
         },
       ];
 
       return { tools };
     });
 
-    this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
+    this.server.setRequestHandler(CallToolRequestSchema, async (request: CallToolRequest) => {
       const { name, arguments: args } = request.params;
 
       try {
@@ -102,9 +105,11 @@ class AndroidScreenshotServer {
     });
   }
 
-  private async takeScreenshot(input: z.infer<typeof TakeScreenshotInputSchema>): Promise<z.infer<typeof TakeScreenshotOutputSchema>> {
+  private async takeScreenshot(
+    input: z.infer<typeof TakeScreenshotInputSchema>
+  ): Promise<z.infer<typeof TakeScreenshotOutputSchema>> {
     const screenshot = await captureScreenshotResponse(input.deviceId);
-    
+
     const result = {
       data: screenshot.data,
       format: screenshot.format,
@@ -117,9 +122,11 @@ class AndroidScreenshotServer {
     return TakeScreenshotOutputSchema.parse(result);
   }
 
-  private async listDevices(input: z.infer<typeof ListDevicesInputSchema>): Promise<z.infer<typeof ListDevicesOutputSchema>> {
+  private async listDevices(
+    input: z.infer<typeof ListDevicesInputSchema>
+  ): Promise<z.infer<typeof ListDevicesOutputSchema>> {
     const devices = getConnectedDevices();
-    
+
     const result = {
       devices: devices.map(device => ({
         id: device.id,
@@ -153,7 +160,7 @@ async function main() {
 
 // Run the server if this file is executed directly
 if (require.main === module) {
-  main().catch((error) => {
+  main().catch(error => {
     console.error('Server error:', error);
     process.exit(1);
   });
