@@ -104,3 +104,7 @@ Thumbs.db
 # Temporary files
 tmp/
 temp/
+
+# Personal settings and configurations
+.gemini/
+.github/copilot-instructions.md
