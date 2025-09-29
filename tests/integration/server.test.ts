@@ -7,6 +7,118 @@ import { setupADBMock } from '../mocks/adb.mock';
 // Mock ADB before importing server
 setupADBMock();
 
+// Set up module mocking for the types module
+jest.mock('../../src/types', () => {
+  const z = require('zod');
+
+  return {
+    // Device information interfaces
+    AndroidDevice: {},
+
+    // Screenshot response interfaces
+    ScreenshotResponse: {},
+
+    // Error handling interfaces
+    ADBError: {},
+    ADBCommandError: class extends Error {
+      code: string;
+      details?: any;
+      suggestion?: string;
+      constructor(code: string, message: string, details?: any, suggestion?: string) {
+        super(message);
+        this.name = 'ADBCommandError';
+        this.code = code;
+        this.details = details;
+        this.suggestion = suggestion;
+      }
+    },
+    ADBNotFoundError: class extends Error {
+      constructor() {
+        super('Android Debug Bridge (ADB) not found');
+        this.name = 'ADBNotFoundError';
+      }
+    },
+    DeviceNotFoundError: class extends Error {
+      constructor(deviceId: string) {
+        super(`Device with ID '${deviceId}' not found`);
+        this.name = 'DeviceNotFoundError';
+      }
+    },
+    NoDevicesFoundError: class extends Error {
+      constructor() {
+        super('No Android devices found');
+        this.name = 'NoDevicesFoundError';
+      }
+    },
+    ScreenshotCaptureError: class extends Error {
+      constructor(deviceId: string, originalError?: Error) {
+        super(`Failed to capture screenshot from device '${deviceId}'`);
+        this.name = 'ScreenshotCaptureError';
+      }
+    },
+
+    // Tool input schemas
+    TakeScreenshotInputSchema: z.object({
+      deviceId: z.string().optional(),
+      format: z.enum(['png']).default('png'),
+    }),
+    ListDevicesInputSchema: z.object({}),
+
+    // Tool output schemas
+    TakeScreenshotOutputSchema: z.object({
+      data: z.string(),
+      format: z.string(),
+      width: z.number(),
+      height: z.number(),
+      deviceId: z.string(),
+      timestamp: z.number(),
+    }),
+    ListDevicesOutputSchema: z.object({
+      devices: z.array(
+        z.object({
+          id: z.string(),
+          status: z.string(),
+          model: z.string().optional(),
+          product: z.string().optional(),
+          transportId: z.string().optional(),
+          usb: z.string().optional(),
+          productString: z.string().optional(),
+        })
+      ),
+    }),
+
+    // MCP Tool schemas
+    TakeScreenshotToolSchema: {
+      type: 'object',
+      properties: {
+        deviceId: {
+          type: 'string',
+          description:
+            'The ID of the Android device to capture a screenshot from. If not provided, uses the first available device.',
+        },
+        format: {
+          type: 'string',
+          enum: ['png'],
+          default: 'png',
+          description: 'The image format for the screenshot. Currently only PNG is supported.',
+        },
+      },
+      required: [],
+    },
+    ListDevicesToolSchema: {
+      type: 'object',
+      properties: {},
+      required: [],
+    },
+
+    // Type exports
+    TakeScreenshotInput: {},
+    ListDevicesInput: {},
+    TakeScreenshotOutput: {},
+    ListDevicesOutput: {},
+  };
+});
+
 // Import server after setting up mocks
 import { AndroidScreenshotServer } from '../../src/server';
 
@@ -34,23 +146,27 @@ describe('MCP Server Integration Tests', () => {
   describe('Tool Listing', () => {
     it('should list available tools', async () => {
       // Create a mock request handler to test tool listing
-      const listToolsHandler = server['server']['requestHandlers'].get('tools/list');
-      
+      const listToolsHandler = server['server']['_requestHandlers'].get('tools/list');
+
       if (listToolsHandler) {
         const response = await listToolsHandler({ method: 'tools/list', params: {} });
-        
+
         expect(response.tools).toBeDefined();
         expect(response.tools).toHaveLength(2);
-        
+
         const toolNames = response.tools.map((tool: any) => tool.name);
         expect(toolNames).toContain('take_android_screenshot');
         expect(toolNames).toContain('list_android_devices');
-        
+
         // Check tool descriptions
-        const screenshotTool = response.tools.find((tool: any) => tool.name === 'take_android_screenshot');
+        const screenshotTool = response.tools.find(
+          (tool: any) => tool.name === 'take_android_screenshot'
+        );
         expect(screenshotTool.description).toContain('screenshot');
-        
-        const devicesTool = response.tools.find((tool: any) => tool.name === 'list_android_devices');
+
+        const devicesTool = response.tools.find(
+          (tool: any) => tool.name === 'list_android_devices'
+        );
         expect(devicesTool.description).toContain('devices');
       }
     });
@@ -59,29 +175,29 @@ describe('MCP Server Integration Tests', () => {
   describe('Tool Calling', () => {
     it('should handle list_android_devices tool call', async () => {
       // Create a mock request handler to test tool calling
-      const callToolHandler = server['server']['requestHandlers'].get('tools/call');
-      
+      const callToolHandler = server['server']['_requestHandlers'].get('tools/call');
+
       if (callToolHandler) {
         const request = {
           method: 'tools/call',
           params: {
             name: 'list_android_devices',
-            arguments: {}
-          }
+            arguments: {},
+          },
         };
-        
+
         const response = await callToolHandler(request);
-        
+
         expect(response.content).toBeDefined();
         expect(response.content).toHaveLength(1);
         expect(response.content[0].type).toBe('text');
-        
+
         // Parse the response text
         const responseData = JSON.parse(response.content[0].text);
         expect(responseData.devices).toBeDefined();
         expect(Array.isArray(responseData.devices)).toBe(true);
         expect(responseData.devices.length).toBeGreaterThan(0);
-        
+
         // Check device structure
         const device = responseData.devices[0];
         expect(device.id).toBeDefined();
@@ -91,24 +207,26 @@ describe('MCP Server Integration Tests', () => {
 
     it('should handle take_android_screenshot tool call', async () => {
       // Create a mock request handler to test tool calling
-      const callToolHandler = server['server']['requestHandlers'].get('tools/call');
-      
+      const callToolHandler = server['server']['_requestHandlers'].get('tools/call');
+
       if (callToolHandler) {
         const request = {
           method: 'tools/call',
           params: {
             name: 'take_android_screenshot',
-            arguments: {}
-          }
+            arguments: {},
+          },
         };
-        
+
         const response = await callToolHandler(request);
-        
+
         expect(response.content).toBeDefined();
         expect(response.content).toHaveLength(1);
         expect(response.content[0].type).toBe('text');
-        
+
         // Parse the response text
+        console.log('Response text:', response.content[0].text);
+        console.log('Response isError:', response.isError);
         const responseData = JSON.parse(response.content[0].text);
         expect(responseData.data).toBeDefined();
         expect(responseData.format).toBe('png');
@@ -121,25 +239,25 @@ describe('MCP Server Integration Tests', () => {
 
     it('should handle take_android_screenshot with specific device', async () => {
       // Create a mock request handler to test tool calling
-      const callToolHandler = server['server']['requestHandlers'].get('tools/call');
-      
+      const callToolHandler = server['server']['_requestHandlers'].get('tools/call');
+
       if (callToolHandler) {
         const request = {
           method: 'tools/call',
           params: {
             name: 'take_android_screenshot',
             arguments: {
-              deviceId: 'emulator-5554'
-            }
-          }
+              deviceId: 'emulator-5554',
+            },
+          },
         };
-        
+
         const response = await callToolHandler(request);
-        
+
         expect(response.content).toBeDefined();
         expect(response.content).toHaveLength(1);
         expect(response.content[0].type).toBe('text');
-        
+
         // Parse the response text
         const responseData = JSON.parse(response.content[0].text);
         expect(responseData.deviceId).toBe('emulator-5554');
@@ -148,17 +266,17 @@ describe('MCP Server Integration Tests', () => {
 
     it('should handle unknown tool name', async () => {
       // Create a mock request handler to test tool calling
-      const callToolHandler = server['server']['requestHandlers'].get('tools/call');
-      
+      const callToolHandler = server['server']['_requestHandlers'].get('tools/call');
+
       if (callToolHandler) {
         const request = {
           method: 'tools/call',
           params: {
             name: 'unknown_tool',
-            arguments: {}
-          }
+            arguments: {},
+          },
         };
-        
+
         await expect(callToolHandler(request)).rejects.toThrow('Unknown tool: unknown_tool');
       }
     });
@@ -167,8 +285,8 @@ describe('MCP Server Integration Tests', () => {
   describe('Error Handling', () => {
     it('should handle errors gracefully', async () => {
       // Create a mock request handler to test tool calling
-      const callToolHandler = server['server']['requestHandlers'].get('tools/call');
-      
+      const callToolHandler = server['server']['_requestHandlers'].get('tools/call');
+
       if (callToolHandler) {
         // Test with invalid arguments that should cause an error
         const request = {
@@ -176,18 +294,18 @@ describe('MCP Server Integration Tests', () => {
           params: {
             name: 'take_android_screenshot',
             arguments: {
-              deviceId: 'nonexistent-device'
-            }
-          }
+              deviceId: 'nonexistent-device',
+            },
+          },
         };
-        
+
         const response = await callToolHandler(request);
-        
+
         expect(response.content).toBeDefined();
         expect(response.content).toHaveLength(1);
         expect(response.content[0].type).toBe('text');
         expect(response.isError).toBe(true);
-        
+
         // The error message should contain information about the error
         const errorMessage = response.content[0].text;
         expect(errorMessage).toContain('DEVICE_NOT_FOUND');
@@ -255,7 +373,7 @@ describe('Server Process Communication', () => {
       jsonrpc: '2.0',
       id: 1,
       method: 'tools/list',
-      params: {}
+      params: {},
     });
 
     serverProcess.stdin.write(request + '\n');
@@ -268,7 +386,7 @@ describe('Server Process Communication', () => {
     const lastLine = responseLines[responseLines.length - 1];
 
     expect(lastLine).toBeDefined();
-    
+
     try {
       const response = JSON.parse(lastLine);
       expect(response.jsonrpc).toBe('2.0');

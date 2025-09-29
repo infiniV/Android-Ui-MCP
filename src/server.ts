@@ -68,8 +68,13 @@ class AndroidScreenshotServer {
             return {
               content: [
                 {
+                  type: 'image',
+                  data: result.data,
+                  mimeType: 'image/png',
+                },
+                {
                   type: 'text',
-                  text: JSON.stringify(result),
+                  text: `Android screenshot captured from ${result.deviceId}: ${result.width}x${result.height} pixels`,
                 },
               ],
             };

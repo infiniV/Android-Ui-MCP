@@ -42,6 +42,35 @@ export function executeADBCommand(command: string, options: ExecSyncOptions = {}
   }
 }
 
+// Execute ADB command that returns binary data
+export function executeADBCommandBinary(command: string, options: ExecSyncOptions = {}): Buffer {
+  if (!checkADBInstalled()) {
+    throw new ADBNotFoundError();
+  }
+
+  const execOptions: ExecSyncOptions = {
+    stdio: 'pipe',
+    timeout: DEFAULT_TIMEOUT,
+    ...options,
+  };
+
+  try {
+    const result = execSync(`adb ${command}`, execOptions);
+    return Buffer.isBuffer(result) ? result : Buffer.from(result);
+  } catch (error: any) {
+    if (error.status === 1 && error.stdout) {
+      // Some ADB commands return output on stderr even when successful
+      const output = error.stdout;
+      return Buffer.isBuffer(output) ? output : Buffer.from(output);
+    }
+    throw new ADBCommandError(
+      'ADB_COMMAND_FAILED',
+      `ADB command failed: ${error.message}`,
+      { command, error: error.message }
+    );
+  }
+}
+
 // Parse device list from ADB output
 export function parseDeviceList(output: string): AndroidDevice[] {
   const lines = output.trim().split('\n');
@@ -122,7 +151,7 @@ export function getFirstAvailableDevice(): AndroidDevice {
 }
 
 // Capture screenshot from a device
-export function captureScreenshot(deviceId?: string): string {
+export function captureScreenshot(deviceId?: string): Buffer {
   let targetDeviceId: string;
   
   try {
@@ -150,9 +179,9 @@ export function captureScreenshot(deviceId?: string): string {
       targetDeviceId = device.id;
     }
     
-    // Capture screenshot
+    // Capture screenshot using binary command execution
     const command = targetDeviceId ? `-s ${targetDeviceId} exec-out screencap -p` : 'exec-out screencap -p';
-    const screenshotData = executeADBCommand(command);
+    const screenshotData = executeADBCommandBinary(command);
     
     if (!screenshotData || screenshotData.length === 0) {
       throw new ScreenshotCaptureError(targetDeviceId);

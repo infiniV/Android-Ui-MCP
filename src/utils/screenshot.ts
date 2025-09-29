@@ -8,12 +8,14 @@ export function getPNGDimensions(pngData: Buffer): { width: number; height: numb
     throw new Error('Invalid PNG data');
   }
 
-  // Width is at bytes 8-11 (big-endian)
-  const width = pngData.readUInt32BE(8);
-  
-  // Height is at bytes 12-15 (big-endian)
-  const height = pngData.readUInt32BE(12);
-  
+  // The first chunk is IHDR which starts at byte 8
+  // The chunk length is at bytes 8-11 (big-endian)
+  // The chunk type is at bytes 12-15
+  // The width is at bytes 16-19 (big-endian)
+  // The height is at bytes 20-23 (big-endian)
+  const width = pngData.readUInt32BE(16);
+  const height = pngData.readUInt32BE(20);
+
   return { width, height };
 }
 
@@ -25,16 +27,15 @@ export function binaryToBase64(data: Buffer): string {
 // Capture screenshot and return formatted response
 export async function captureScreenshotResponse(deviceId?: string): Promise<ScreenshotResponse> {
   try {
-    // Capture screenshot as binary data
-    const screenshotData = captureScreenshot(deviceId);
-    const buffer = Buffer.from(screenshotData, 'binary');
-    
+    // Capture screenshot as binary data (now returns Buffer directly)
+    const buffer = captureScreenshot(deviceId);
+
     // Get image dimensions
     const { width, height } = getPNGDimensions(buffer);
-    
+
     // Convert to base64
     const base64Data = binaryToBase64(buffer);
-    
+
     // Return formatted response
     return {
       data: base64Data,
@@ -45,6 +46,8 @@ export async function captureScreenshotResponse(deviceId?: string): Promise<Scre
       timestamp: Date.now(),
     };
   } catch (error) {
-    throw new Error(`Failed to capture screenshot: ${error instanceof Error ? error.message : String(error)}`);
+    throw new Error(
+      `Failed to capture screenshot: ${error instanceof Error ? error.message : String(error)}`
+    );
   }
 }

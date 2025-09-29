@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "android-ui-assist": {
+      "command": "node",
+      "args": [
+        "D:\\projects\\android-ui-assist-mcp\\dist\\index.js"
+      ]
+    }
+  }
+}
