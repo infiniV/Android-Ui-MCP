@@ -1,31 +1,75 @@
-# Android UI Assist MCP Server
+# Real-Time Android UI Development with AI Agents - MCP Server
 
 [![npm version](https://badge.fury.io/js/android-ui-assist-mcp.svg)](https://badge.fury.io/js/android-ui-assist-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://typescriptlang.org)
 [![Node.js](https://img.shields.io/badge/Node.js-339933?logo=node.js&logoColor=white)](https://nodejs.org)
 
-Model Context Protocol server for capturing Android device screenshots and device management for AI analysis. Supports Claude Desktop, Gemini CLI, and GitHub Copilot integration.
+Model Context Protocol server that enables AI coding agents to see and analyze your Android app UI in real-time during development. Perfect for iterative UI refinement with Expo, React Native, Flutter, and native Android development workflows. Connect your AI agent to your running app and get instant visual feedback on UI changes.
+
+**Keywords:** android development ai agent, real-time ui feedback, expo development tools, react native ui assistant, flutter development ai, android emulator screenshot, ai powered ui testing, visual regression testing ai, mobile app development ai, iterative ui development, ai code assistant android
+
+## Quick Demo
+
+See the MCP server in action with real-time Android UI analysis:
+
+| MCP Server Status | Live Development Workflow |
+|-------------------|---------------------------|
+| ![Tools](preview/tools.png) | ![Usage](preview/usage.png) |
+| Server ready with 2 tools available | AI agent analyzing Android UI in real-time |
 
 ## Features
 
-- Screenshot capture from Android devices and emulators
-- Connected device listing and management
-- MCP protocol integration with major AI platforms
-- Docker deployment support
-- Comprehensive error handling with timeout management
-- Secure stdio communication
+**Real-Time Development Workflow**
+- Live screenshot capture during app development with Expo, React Native, Flutter
+- Instant visual feedback for AI agents on UI changes and iterations
+- Seamless integration with development servers and hot reload workflows
+- Support for both physical devices and emulators during active development
+
+**AI Agent Integration**
+- MCP protocol support for Claude Desktop, GitHub Copilot, and Gemini CLI
+- Enable AI agents to see your app UI and provide contextual suggestions
+- Perfect for iterative UI refinement and design feedback loops
+- Visual context for AI-powered code generation and UI improvements
+
+**Developer Experience**
+- Zero-configuration setup with running development environments
+- Docker deployment for team collaboration and CI/CD pipelines
+- Comprehensive error handling with helpful development suggestions
+- Secure stdio communication with timeout management
 
 ## Table of Contents
 
+- [Development Workflow](#development-workflow)
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [AI Agent Configuration](#ai-agent-configuration)
+- [Development Environment Setup](#development-environment-setup)
 - [Docker Deployment](#docker-deployment)
 - [Available Tools](#available-tools)
-- [Usage](#usage)
+- [Usage Examples](#usage-examples)
 - [Troubleshooting](#troubleshooting)
 - [Development](#development)
+
+## Development Workflow
+
+This MCP server transforms how you develop Android UIs by giving AI agents real-time visual access to your running application. Here's the typical workflow:
+
+1. **Start Your Development Environment**: Launch Expo, React Native Metro, Flutter, or Android Studio with your app running
+2. **Connect the MCP Server**: Configure your AI agent (Claude, Copilot, Gemini) to use this MCP server
+3. **Iterative Development**: Ask your AI agent to analyze the current UI, suggest improvements, or help implement changes
+4. **Real-Time Feedback**: The AI agent takes screenshots to see the results of code changes immediately
+5. **Refine and Repeat**: Continue the conversation with visual context for better UI development
+
+**Perfect for:**
+- Expo development with live preview and hot reload
+- React Native development with Metro bundler
+- Flutter development with hot reload
+- Native Android development with instant run
+- UI testing and visual regression analysis
+- Collaborative design reviews with AI assistance
+- Accessibility testing with visual context
+- Cross-platform UI consistency checking
 
 ## Prerequisites
 
@@ -90,6 +134,52 @@ For local development:
 ```
 
 Restart Claude Desktop to apply configuration.
+
+## Development Environment Setup
+
+### Expo Development
+
+1. Start your Expo development server:
+```bash
+npx expo start
+# or
+npm start
+```
+
+2. Open your app on a connected device or emulator
+3. Ensure your device appears in `adb devices`
+4. Your AI agent can now take screenshots during development
+
+### React Native Development
+
+1. Start Metro bundler:
+```bash
+npx react-native start
+```
+
+2. Run on Android:
+```bash
+npx react-native run-android
+```
+
+3. Enable hot reload for instant feedback with AI analysis
+
+### Flutter Development
+
+1. Start Flutter in debug mode:
+```bash
+flutter run
+```
+
+2. Use hot reload (`r`) and hot restart (`R`) while getting AI feedback
+3. The AI agent can capture UI states after each change
+
+### Native Android Development
+
+1. Open project in Android Studio
+2. Run app with instant run enabled
+3. Connect device or start emulator
+4. Enable AI agent integration for real-time UI analysis
 
 ### Gemini CLI
 
@@ -191,6 +281,8 @@ docker run -it --rm --privileged -v /dev/bus/usb:/dev/bus/usb android-ui-assist-
 
 ## Available Tools
 
+![MCP Tools Available](preview/tools.png)
+
 | Tool                      | Description                | Parameters            |
 | ------------------------- | -------------------------- | --------------------- |
 | `take_android_screenshot` | Captures device screenshot | `deviceId` (optional) |
@@ -229,13 +321,34 @@ docker run -it --rm --privileged -v /dev/bus/usb:/dev/bus/usb android-ui-assist-
 }
 ```
 
-## Usage
+## Usage Examples
 
-Request screenshots or device information through your AI agent:
+![Real-Time Development Workflow](preview/usage.png)
 
-- "Take a screenshot of my Android device"
-- "List connected Android devices"
-- "Capture screen from device emulator-5554"
+*Example: AI agent listing devices, capturing screenshots, and providing detailed UI analysis in real-time*
+
+### Real-Time UI Development
+
+With your development environment running (Expo, React Native, Flutter, etc.), interact with your AI agent:
+
+**Initial Analysis:**
+- "Take a screenshot of my current app UI and analyze the layout"
+- "Show me the current state of my login screen and suggest improvements"
+- "Capture the app and check for accessibility issues"
+
+**Iterative Development:**
+- "I just changed the button color, take another screenshot and compare"
+- "Help me adjust the spacing - take a screenshot after each change"
+- "Take a screenshot and tell me if the new navigation looks good"
+
+**Cross-Platform Testing:**
+- "Capture screenshots from both my phone and tablet emulator"
+- "Show me how the UI looks on device emulator-5554 vs my physical device"
+
+**Development Debugging:**
+- "List all connected devices and their status"
+- "Take a screenshot from the specific emulator running my debug build"
+- "Capture the current error state and help me fix the UI issue"
 
 ## Troubleshooting
 
