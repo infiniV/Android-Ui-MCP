@@ -108,3 +108,4 @@ temp/
 # Personal settings and configurations
 .gemini/
 .github/copilot-instructions.md
+GEMINI.md

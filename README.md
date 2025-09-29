@@ -13,26 +13,29 @@ Model Context Protocol server that enables AI coding agents to see and analyze y
 
 See the MCP server in action with real-time Android UI analysis:
 
-| MCP Server Status | Live Development Workflow |
-|-------------------|---------------------------|
-| ![Tools](preview/tools.png) | ![Usage](preview/usage.png) |
+| MCP Server Status                   | Live Development Workflow                  |
+| ----------------------------------- | ------------------------------------------ |
+| ![Tools](preview/tools.png)         | ![Usage](preview/usage.png)                |
 | Server ready with 2 tools available | AI agent analyzing Android UI in real-time |
 
 ## Features
 
 **Real-Time Development Workflow**
+
 - Live screenshot capture during app development with Expo, React Native, Flutter
 - Instant visual feedback for AI agents on UI changes and iterations
 - Seamless integration with development servers and hot reload workflows
 - Support for both physical devices and emulators during active development
 
 **AI Agent Integration**
+
 - MCP protocol support for Claude Desktop, GitHub Copilot, and Gemini CLI
 - Enable AI agents to see your app UI and provide contextual suggestions
 - Perfect for iterative UI refinement and design feedback loops
 - Visual context for AI-powered code generation and UI improvements
 
 **Developer Experience**
+
 - Zero-configuration setup with running development environments
 - Docker deployment for team collaboration and CI/CD pipelines
 - Comprehensive error handling with helpful development suggestions
@@ -62,6 +65,7 @@ This MCP server transforms how you develop Android UIs by giving AI agents real-
 5. **Refine and Repeat**: Continue the conversation with visual context for better UI development
 
 **Perfect for:**
+
 - Expo development with live preview and hot reload
 - React Native development with Metro bundler
 - Flutter development with hot reload
@@ -140,6 +144,7 @@ Restart Claude Desktop to apply configuration.
 ### Expo Development
 
 1. Start your Expo development server:
+
 ```bash
 npx expo start
 # or
@@ -153,11 +158,13 @@ npm start
 ### React Native Development
 
 1. Start Metro bundler:
+
 ```bash
 npx react-native start
 ```
 
 2. Run on Android:
+
 ```bash
 npx react-native run-android
 ```
@@ -167,6 +174,7 @@ npx react-native run-android
 ### Flutter Development
 
 1. Start Flutter in debug mode:
+
 ```bash
 flutter run
 ```
@@ -325,27 +333,31 @@ docker run -it --rm --privileged -v /dev/bus/usb:/dev/bus/usb android-ui-assist-
 
 ![Real-Time Development Workflow](preview/usage.png)
 
-*Example: AI agent listing devices, capturing screenshots, and providing detailed UI analysis in real-time*
+_Example: AI agent listing devices, capturing screenshots, and providing detailed UI analysis in real-time_
 
 ### Real-Time UI Development
 
 With your development environment running (Expo, React Native, Flutter, etc.), interact with your AI agent:
 
 **Initial Analysis:**
+
 - "Take a screenshot of my current app UI and analyze the layout"
 - "Show me the current state of my login screen and suggest improvements"
 - "Capture the app and check for accessibility issues"
 
 **Iterative Development:**
+
 - "I just changed the button color, take another screenshot and compare"
 - "Help me adjust the spacing - take a screenshot after each change"
 - "Take a screenshot and tell me if the new navigation looks good"
 
 **Cross-Platform Testing:**
+
 - "Capture screenshots from both my phone and tablet emulator"
 - "Show me how the UI looks on device emulator-5554 vs my physical device"
 
 **Development Debugging:**
+
 - "List all connected devices and their status"
 - "Take a screenshot from the specific emulator running my debug build"
 - "Capture the current error state and help me fix the UI issue"

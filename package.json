@@ -29,8 +29,11 @@
     "ai",
     "claude"
   ],
-  "author": "",
+  "author": "infiniv <raahim.arbaz22@gmail.com>",
   "license": "MIT",
+  "files": [
+    "dist"
+  ],
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
     "zod": "^3.22.4"
