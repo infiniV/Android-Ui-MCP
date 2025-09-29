@@ -43,16 +43,106 @@ See the MCP server in action with real-time Android UI analysis:
 
 ## Table of Contents
 
-- [Development Workflow](#development-workflow)
-- [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [AI Agent Configuration](#ai-agent-configuration)
+- [Development Workflow](#development-workflow)
+- [Prerequisites](#prerequisites)
 - [Development Environment Setup](#development-environment-setup)
 - [Docker Deployment](#docker-deployment)
 - [Available Tools](#available-tools)
 - [Usage Examples](#usage-examples)
 - [Troubleshooting](#troubleshooting)
 - [Development](#development)
+
+## Installation
+
+### Package Manager Installation
+
+```bash
+npm install -g android-ui-assist-mcp
+```
+
+### Source Installation
+
+```bash
+git clone https://github.com/yourusername/android-ui-assist-mcp
+cd android-ui-assist-mcp
+npm install && npm run build
+```
+
+### Installation Verification
+
+After installation, verify the package is available:
+
+```bash
+android-ui-assist-mcp --version
+# For npm installation
+npx android-ui-assist-mcp --version
+```
+
+## AI Agent Configuration
+
+### Claude Code
+
+Configure Claude Code by adding the MCP server to your configuration:
+
+**Global Configuration:**
+```json
+{
+  "mcpServers": {
+    "android-ui-assist": {
+      "command": "npx",
+      "args": ["android-ui-assist-mcp"],
+      "timeout": 10000
+    }
+  }
+}
+```
+
+**Local Development Configuration:**
+```json
+{
+  "mcpServers": {
+    "android-ui-assist": {
+      "command": "node",
+      "args": ["D:\\projects\\android-ui-assist-mcp\\dist\\index.js"],
+      "timeout": 10000
+    }
+  }
+}
+```
+
+### Claude Desktop
+
+Create or edit `%APPDATA%\Claude\claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "android-ui-assist": {
+      "command": "npx",
+      "args": ["android-ui-assist-mcp"],
+      "timeout": 10000
+    }
+  }
+}
+```
+
+For local development:
+
+```json
+{
+  "mcpServers": {
+    "android-ui-assist": {
+      "command": "node",
+      "args": ["d:\\projects\\android-ui-assist-mcp\\dist\\index.js"],
+      "timeout": 10000
+    }
+  }
+}
+```
+
+Restart Claude Desktop to apply configuration.
 
 ## Development Workflow
 
@@ -89,55 +179,6 @@ This MCP server transforms how you develop Android UIs by giving AI agents real-
 2. Enable USB Debugging: Settings > Developer Options > USB Debugging
 3. Verify connection: `adb devices`
 
-## Installation
-
-### NPM Installation
-
-```bash
-npm install -g android-ui-assist-mcp
-```
-
-### From Source
-
-```bash
-git clone https://github.com/yourusername/android-ui-assist-mcp
-cd android-ui-assist-mcp
-npm install && npm run build
-```
-
-## AI Agent Configuration
-
-### Claude Desktop
-
-Create or edit `%APPDATA%\Claude\claude_desktop_config.json`:
-
-```json
-{
-  "mcpServers": {
-    "android-ui-assist": {
-      "command": "npx",
-      "args": ["android-ui-assist-mcp"],
-      "timeout": 10000
-    }
-  }
-}
-```
-
-For local development:
-
-```json
-{
-  "mcpServers": {
-    "android-ui-assist": {
-      "command": "node",
-      "args": ["d:\\projects\\android-ui-assist-mcp\\dist\\index.js"],
-      "timeout": 10000
-    }
-  }
-}
-```
-
-Restart Claude Desktop to apply configuration.
 
 ## Development Environment Setup
 
